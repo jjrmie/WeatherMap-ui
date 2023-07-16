@@ -327,3 +327,8 @@
     bottom: 3%;
     left:1%;
 }
+
+::ng-deep .weather {
+  position: absolute !important;
+  bottom: 30%;
+}

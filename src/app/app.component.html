@@ -41,9 +41,13 @@
 
   <div class="card-container">
     <div  id="city">
-      <select class="dropdown" id="cityDropdown" name="city" >
+      <select class="dropdown" id="cityDropdown" name="city" (change)="getWeather()">
       </select>&nbsp;
     </div>
+  </div>
+
+  <div class="weather">
+    <label id="weatherDescription"></label>
   </div>
 
   <!-- Footer -->
