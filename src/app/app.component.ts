@@ -37,14 +37,11 @@ export class AppComponent implements OnInit {
       countrydropdown.prop('selectedIndex', 0);
 
       $.each(this.countryData, function(i, item) {
-
         countrydropdown.append($('<option></option>').val(item.country).html(item.country));
-
       });
 
-      this.openSuccessSnackBar('Success');
-      this.openFailureSnackBar('Failed');
-
+      //this.openSuccessSnackBar('Success');
+      //this.openFailureSnackBar('Failed');
   }
 
   populateCity () {
@@ -60,11 +57,8 @@ export class AppComponent implements OnInit {
     citydropdown.prop('selectedIndex', 0);
 
     $.each(this.countryCityData, function(i, item) {
-  
       if (item.country === $('#countryDropdown').find(":selected").val()) {
-
       citydropdown.append($('<option></option>').val(item.city).html(item.city));
-
       }
     });
 
