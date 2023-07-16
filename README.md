@@ -19,3 +19,14 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 Run `npm install` to restore/ install all packages
 
 Run `npm start` to start the app
+
+Navigate to localhost:4200 when the build is successful
+
+Make your selection of a country and a city to retrieve the weather from the OpenWeathermap.org
+![image](https://github.com/jjrmie/WeatherMap-ui/assets/139659998/dff256ee-0611-4d57-8df0-6cb6b3076136)
+
+The Angular ui app should handle:
+a. Uses the REST URL from the WeatherMap-api
+b. Allows user to enter city name and country name
+c. Presents the result to user
+d. Handles any error
