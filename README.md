@@ -19,3 +19,7 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 Run `npm install` to restore/ install all packages
 
 Run `npm start` to start the app
+
+Navigate to localhost:4200
+![image](https://github.com/jjrmie/WeatherMap-ui/assets/139659998/dff256ee-0611-4d57-8df0-6cb6b3076136)
+
