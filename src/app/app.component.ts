@@ -2,12 +2,8 @@ import { Component, Injector, OnInit } from '@angular/core';
 import * as $ from 'jquery';
 import * as countryCityData from '../assets/countryCity.json';
 import * as countryData from '../assets/country.json';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from 'src/environments/environment';
-import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { error } from 'console';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +14,7 @@ import { error } from 'console';
 export class AppComponent implements OnInit {
 
 
-  constructor(public snackBar: MatSnackBar, private http: HttpClient) { }
-
+  constructor() { }
 
   title = 'WeatherMap-ui';
   todayDate : Date = new Date();
@@ -28,40 +23,13 @@ export class AppComponent implements OnInit {
   filteredData = [];
   weatherDescription :any;
 
-  //Get Angular Snack Bars ready to use
-  //this.openSuccessSnackBar('Success');
-  //this.openFailureSnackBar('Failed');
-
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = '';
-    if (error.error instanceof ErrorEvent) {
-        // A client-side or network error occurred. Handle it accordingly.
-        this.openFailureSnackBar("An error occurred. " + error.error.message);
-    } else {
-        // The backend returned an unsuccessful response code.
-        // The response body may contain clues as to what went wrong,
-        errorMessage = `Message: ${error.error.Message}`;
-        this.openFailureSnackBar(errorMessage);
-    }
-    // return an observable with a user-facing error message
-    return throwError(errorMessage);
-};
-
-
   ngOnInit() {
-
       let countrydropdown = $('#countryDropdown');
-
       let citydropdown = $('#cityDropdown');
-
       citydropdown.hide();
-
       countrydropdown.empty();
-
       countrydropdown.append('<option disabled selected hidden>Choose Country</option>');
-
       countrydropdown.prop('selectedIndex', 0);
-
       $.each(this.countryData, function(i, item) {
         countrydropdown.append($('<option></option>').val(item.country).html(item.country));
       });
@@ -84,7 +52,6 @@ export class AppComponent implements OnInit {
         citydropdown.append($('<option></option>').val(item.city).html(item.city));
       }
     });
-
   }
 
   getWeather() {
@@ -96,50 +63,64 @@ export class AppComponent implements OnInit {
     .set('Access-Control-Allow-Origin', '*');
 
     var parameter = "country="+$('#countryDropdown').find(":selected").val() + "&city=" + $('#cityDropdown').find(":selected").val();
-
     
   $.ajax({
-
     url: environment.apiEndpoint + "WeatherForecast?" + parameter,
     type: 'GET',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Access-Control-Allow-Headers': 'Content-Type', 'ApiKey': environment.ApiKey, 'Access-Control-Allow-Origin': '*'},
     dataType: 'json', // added data type
-    success: function(xhr) {
-        console.log(xhr);
-
-        $("#weatherDescription").text($('#cityDropdown').find(":selected").val() + ", " + $('#countryDropdown').find(":selected").val() + " currently has " + xhr.weather[0].description + ".");
-    },
-    error: function (xhr) {
-    }
-  
-
-    });
-
-  }
-
-getHeaders() {
-  var headers=new HttpHeaders().set('ApiKey', environment.ApiKey).set('Access-Control-Allow-Origin', '*');  
-  return headers;
-}
-
-  //Success snackbar
-  openSuccessSnackBar(message:string) {
-  this.snackBar.open(message, "OK", {
-    duration: 3000,
-    panelClass: ['green-snackbar', 'login-snackbar'],
+    // success: function(xhr) {
+    //     console.log(xhr);
+    //     $("#weatherDescription").text($('#cityDropdown').find(":selected").val() + ", " + $('#countryDropdown').find(":selected").val() + " currently has " + xhr.weather[0].description + ".");
+    // },
+      success:processSuccess,
+      error: handleError
     });
   }
-  
-  //Failure snackbar
-  openFailureSnackBar(message:string) {
-  this.snackBar.open(message, "Try again!", {
-    duration: 3000,
-    panelClass: ['red-snackbar','login-snackbar'],
-    });
-  }
-
  } 
 
+ function processSuccess (xhr:any) {
+  // Get the snackbar DIV and show custom message
+  var msg = '';
+
+  //debugger;
+  if (xhr.cod === 400) {
+      msg = '[400] Bad request.';
+      showSnackBar(msg);
+  } else {
+    //console.log(xhr);
+    var description = xhr.weather[0].description == undefined? "no weather report" : xhr.weather[0].description;
+    $("#weatherDescription").text($('#cityDropdown').find(":selected").val() + ", " + $('#countryDropdown').find(":selected").val() + " currently has " + description + ".");
+  }
+}
+
+  function handleError (xhr:any) {
+    // Get the snackbar DIV and show custom message
+    var msg = '';
+
+    //debugger;
+    if (xhr.status === 0) {
+        msg = 'Cannot connect to the weather microservice.\n Please verify the network.';
+    } else {
+        msg = "[" + xhr.status + "] " + xhr.responseText;
+    }
+
+    showSnackBar(msg);
+  }
+
+  function showSnackBar(msg:string) {
+    var snackbarDiv = $("#snackbarDiv");
+    var snackbarError = $("#snackbarError");
+    var weatherDescription = $("#weatherDescription");
+  
+    // Add the "show" class to DIV
+    snackbarDiv.addClass("show");
+    snackbarError.text(msg);
+    weatherDescription.text("");
+  
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function(){ snackbarDiv.removeClass("show"); }, 3000);
+  }
 
 
 
