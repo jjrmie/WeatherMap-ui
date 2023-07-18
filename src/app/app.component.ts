@@ -31,13 +31,16 @@ export class AppComponent implements OnInit {
       $.each(this.countryData, function(i, item) {
         countrydropdown.append($('<option></option>').val(item.country).html(item.country));
       });
+      localStorage.setItem('keyOrder','key1');
+      let tryagain = $('#tryAgain');
+      tryagain.hide();
   }
 
   populateCity () {
-    
     let citydropdown = $('#cityDropdown');
     citydropdown.show();
     citydropdown.empty();
+
     citydropdown.append('<option disabled selected hidden>Choose City</option>');
     citydropdown.prop('selectedIndex', 0);
 
@@ -49,17 +52,38 @@ export class AppComponent implements OnInit {
   }
 
   getWeather() {
+
+    
     var parameter = "country="+$('#countryDropdown').find(":selected").val() + "&city=" + $('#cityDropdown').find(":selected").val();
+
+    let apiKey = this.rotateApiKey();
     
     $.ajax({
       url: environment.apiEndpoint + "WeatherForecast?" + parameter,
       type: 'GET',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Access-Control-Allow-Headers': 'Content-Type', 'ApiKey': environment.ApiKey, 'Access-Control-Allow-Origin': '*'},
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Access-Control-Allow-Headers': 'Content-Type', 'ApiKey': apiKey, 'Access-Control-Allow-Origin': '*'},
       dataType: 'json', // added data type
         success:processSuccess,
-        error: handleError
+        error: handleError,
       });
   }
+
+  rotateApiKey() {
+    let keyOrder = localStorage.getItem('keyOrder');
+    if (keyOrder=="key1") 
+      return environment.ApiKey.key1;
+    else if (keyOrder=="key2")
+      return environment.ApiKey.key2;
+    else if (keyOrder=="key3")
+      return environment.ApiKey.key3;
+    else if (keyOrder=="key4")
+      return environment.ApiKey.key4;
+    else if (keyOrder=="key5")
+      return environment.ApiKey.key5;
+    else
+      return "";
+  }
+
  } 
 
  function processSuccess (xhr:any) {
@@ -74,6 +98,8 @@ export class AppComponent implements OnInit {
     //console.log(xhr);
     var description = xhr.weather[0].description == undefined? "no weather report" : xhr.weather[0].description;
     $("#weatherDescription").text($('#cityDropdown').find(":selected").val() + ", " + $('#countryDropdown').find(":selected").val() + " currently has " + description + ".");
+    let tryagain = $('#tryAgain');
+    tryagain.hide();
   }
 }
 
@@ -86,7 +112,27 @@ export class AppComponent implements OnInit {
     } else {
         msg = "[" + xhr.status + "] " + xhr.responseText;
     }
+
+    if (xhr.status === 429) {
+      setKeyOrder();
+      let tryagain = $('#tryAgain');
+      tryagain.show();
+    }
     showSnackBar(msg);
+  }
+
+  function setKeyOrder() {
+    let keyOrder = localStorage.getItem('keyOrder');
+    if (keyOrder=="key1") 
+    localStorage.setItem('keyOrder','key2');
+    else if (keyOrder=="key2")
+    localStorage.setItem('keyOrder','key3');
+    else if (keyOrder=="key3")
+    localStorage.setItem('keyOrder','key4');
+    else if (keyOrder=="key4")
+    localStorage.setItem('keyOrder','key5');
+    else
+    localStorage.setItem('keyOrder','key1');
   }
 
   function showSnackBar(msg:string) {

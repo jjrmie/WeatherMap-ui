@@ -314,6 +314,11 @@
   bottom: 30%;
 }
 
+::ng-deep .tryAgainButton {
+  position: relative !important;
+  top: 20px !important;
+}
+
 /*Snackbar*/
 /* The snackbar - position it at the bottom and in the middle of the screen */
 #snackbarDiv {
