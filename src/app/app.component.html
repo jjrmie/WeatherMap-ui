@@ -41,10 +41,18 @@
 
   <div class="card-container">
     <div  id="city">
-      <select class="dropdown" id="cityDropdown" name="city" >
+      <select class="dropdown" id="cityDropdown" name="city" (change)="getWeather()">
       </select>&nbsp;
     </div>
   </div>
+
+  <div class="tryAgainButton"><button class="btn btn-secondary" id="tryAgain" (click)="getWeather()">Get Weather Again</button></div>
+
+  <div class="weather">
+    <h4 id="weatherDescription"></h4>
+  </div>
+
+  <div id="snackbarDiv"><label id="snackbarError"></label></div>
 
   <!-- Footer -->
   <footer class="footerClass">
